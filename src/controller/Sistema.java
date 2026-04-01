@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Sistema {
     private static final int MAX_GRUPOS = 5;
-    private static final int MAX_PARTICIPANTES = 5;
 
     private static Sistema instancia;
 
@@ -35,18 +34,16 @@ public class Sistema {
         return instancia;
     }
 
-
+    // ---- Clube ----
     public String cadastrarClube(Clube clube) {
         for (Clube c : clubes) {
-
             if (c.getNome().equalsIgnoreCase(clube.getNome())) return "Clube já cadastrado";
         }
         clubes.add(clube);
-
         return "ok";
     }
 
-
+    // ---- Campeonato ----
     public String cadastrarCampeonato(Campeonato campeonato) {
         for (Campeonato c : campeonatos) {
             if (c.getNome().equalsIgnoreCase(campeonato.getNome())) return "Campeonato já cadastrado";
@@ -55,7 +52,7 @@ public class Sistema {
         return "ok";
     }
 
-
+    // ---- Partida ----
     public String cadastrarPartida(Partida partida) {
         if (partida.getClubeMandante().equals(partida.getClubeVisitante())) {
             return "Os clubes da partida não podem ser iguais";
@@ -64,7 +61,7 @@ public class Sistema {
         return "ok";
     }
 
-
+    // ---- Grupo ----
     public String cadastrarGrupo(Grupo grupo) {
         if (grupos.size() >= MAX_GRUPOS) return "Limite de grupos atingido (máx. 5)";
         for (Grupo g : grupos) {
@@ -74,9 +71,8 @@ public class Sistema {
         return "ok";
     }
 
-
+    // ---- Participante ----
     public String cadastrarParticipante(Participante participante) {
-        if (participantes.size() >= MAX_PARTICIPANTES) return "Limite de participantes atingido (máx. 5)";
         for (Participante p : participantes) {
             if (p.getLogin().equalsIgnoreCase(participante.getLogin())) return "Login já utilizado";
         }
@@ -84,7 +80,7 @@ public class Sistema {
         return "ok";
     }
 
-
+    // ---- Aposta ----
     public String registrarAposta(Aposta aposta) {
         if (!aposta.getPartida().isApostaPermitida()) {
             return "Apostas encerradas: a partida já ocorreu ou está a menos de 20 minutos";
@@ -99,7 +95,7 @@ public class Sistema {
         return "ok";
     }
 
-
+    // ---- Resultado ----
     public void registrarResultado(Partida partida, int golsMandante, int golsVisitante) {
         partida.registrarResultado(golsMandante, golsVisitante);
         for (Aposta a : apostas) {
@@ -110,6 +106,15 @@ public class Sistema {
         }
     }
 
+    public boolean jaApostou(Participante participante, Partida partida) {
+        for (Aposta a : apostas) {
+            if (a.getParticipante().equals(participante) && a.getPartida().equals(partida)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Aposta> getApostasDaPartida(Partida partida) {
         List<Aposta> resultado = new ArrayList<>();
         for (Aposta a : apostas) {
@@ -118,7 +123,7 @@ public class Sistema {
         return resultado;
     }
 
-
+    // ---- Getters ----
     public List<Clube> getClubes() { return clubes; }
     public List<Campeonato> getCampeonatos() { return campeonatos; }
     public List<Partida> getPartidas() { return partidas; }

@@ -1,8 +1,8 @@
-import view.MainFrame;
+import view.LoginFrame;
 import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainFrame::new);
+        SwingUtilities.invokeLater(LoginFrame::new);
     }
 }

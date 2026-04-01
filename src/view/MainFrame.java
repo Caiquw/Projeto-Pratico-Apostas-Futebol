@@ -8,16 +8,19 @@ import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class MainFrame extends JFrame {
 
     private final Sistema sistema = Sistema.getInstancia();
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    private final boolean isAdmin;
     private JTextArea taLog;
 
-    public MainFrame() {
-        super("Sistema de Apostas - Campeonato de Futebol");
+    public MainFrame(boolean isAdmin) {
+        super("Sistema de Apostas - Campeonato de Futebol" + (isAdmin ? " [ADMIN]" : " [USUÁRIO]"));
+        this.isAdmin = isAdmin;
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -41,80 +44,71 @@ public class MainFrame extends JFrame {
                 new Clube("Grêmio", "RS"),
                 new Clube("Internacional", "RS")
         };
-        for (Clube c : clubes) {
-            sistema.cadastrarClube(c);
-        }
+        for (Clube c : clubes) sistema.cadastrarClube(c);
     }
 
     private void construirUI() {
         setLayout(new BorderLayout(8, 8));
 
-        // Painel de botões à esquerda
-        JPanel painelBotoes = new JPanel(new GridLayout(8, 1, 4, 4));
+        JPanel painelBotoes = new JPanel(new GridLayout(0, 1, 4, 4));
         painelBotoes.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
 
-        JButton btnClube        = new JButton("Cadastrar Clube");
         JButton btnCampeonato   = new JButton("Cadastrar Campeonato");
         JButton btnAddClube     = new JButton("Add Clube ao Camp.");
         JButton btnPartida      = new JButton("Cadastrar Partida");
         JButton btnGrupo        = new JButton("Cadastrar Grupo");
         JButton btnParticipante = new JButton("Cadastrar Participante");
         JButton btnAposta       = new JButton("Registrar Aposta");
-        JButton btnResultado    = new JButton("Registrar Resultado");
 
-        painelBotoes.add(btnClube);
         painelBotoes.add(btnCampeonato);
         painelBotoes.add(btnAddClube);
         painelBotoes.add(btnPartida);
         painelBotoes.add(btnGrupo);
         painelBotoes.add(btnParticipante);
         painelBotoes.add(btnAposta);
-        painelBotoes.add(btnResultado);
 
-        // Área de log/saída
+        // Botão exclusivo do admin
+        if (isAdmin) {
+            JButton btnResultado = new JButton("Registrar Resultado");
+            painelBotoes.add(btnResultado);
+            btnResultado.addActionListener(e -> registrarResultado());
+        }
+
         taLog = new JTextArea();
         taLog.setEditable(false);
         taLog.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         JScrollPane scroll = new JScrollPane(taLog);
         scroll.setBorder(BorderFactory.createTitledBorder("Saída do Sistema"));
 
-        // Rodapé
         JButton btnClass = new JButton("Ver Classificação do Grupo");
         btnClass.addActionListener(e -> verClassificacao());
+        JButton btnLogoff = new JButton("Logoff");
+        btnLogoff.addActionListener(e -> {
+            dispose();
+            new LoginFrame();
+        });
         JPanel rodape = new JPanel();
         rodape.add(btnClass);
+        rodape.add(btnLogoff);
 
         add(painelBotoes, BorderLayout.WEST);
         add(scroll, BorderLayout.CENTER);
         add(rodape, BorderLayout.SOUTH);
 
-        // Ações dos botões
-        btnClube.addActionListener(e -> cadastrarClube());
         btnCampeonato.addActionListener(e -> cadastrarCampeonato());
         btnAddClube.addActionListener(e -> adicionarClubeAoCampeonato());
         btnPartida.addActionListener(e -> cadastrarPartida());
         btnGrupo.addActionListener(e -> cadastrarGrupo());
         btnParticipante.addActionListener(e -> cadastrarParticipante());
         btnAposta.addActionListener(e -> registrarAposta());
-        btnResultado.addActionListener(e -> registrarResultado());
 
-        log("Bem-vindo! Use os botões para operar o sistema.");
+        String perfil = isAdmin ? "Administrador" : "Usuário";
+        log("Bem-vindo! Perfil: " + perfil + ". Use os botões para operar o sistema.");
     }
 
     // =========================================================
     // AÇÕES
     // =========================================================
-
-    private void cadastrarClube() {
-        String nome = JOptionPane.showInputDialog(this, "Nome do clube:");
-        if (nome == null || nome.isBlank()) return;
-        String estado = JOptionPane.showInputDialog(this, "Estado do clube:");
-        if (estado == null || estado.isBlank()) return;
-
-        String res = sistema.cadastrarClube(new Clube(nome.trim(), estado.trim()));
-        if ("ok".equals(res)) log("Clube cadastrado: " + nome + " (" + estado + ")");
-        else log("Erro: " + res);
-    }
 
     private void cadastrarCampeonato() {
         String nome = JOptionPane.showInputDialog(this, "Nome do campeonato:");
@@ -133,7 +127,7 @@ public class MainFrame extends JFrame {
 
     private void adicionarClubeAoCampeonato() {
         if (sistema.getCampeonatos().isEmpty() || sistema.getClubes().isEmpty()) {
-            log("Cadastre ao menos um campeonato e um clube antes."); return;
+            log("Cadastre ao menos um campeonato antes."); return;
         }
         Campeonato camp = (Campeonato) JOptionPane.showInputDialog(this,
                 "Selecione o campeonato:", "Campeonato",
@@ -225,21 +219,40 @@ public class MainFrame extends JFrame {
     }
 
     private void registrarAposta() {
-        if (sistema.getParticipantes().isEmpty() || sistema.getPartidas().isEmpty()) {
-            log("Cadastre participantes e partidas antes."); return;
-        }
-        Participante p = (Participante) JOptionPane.showInputDialog(this,
-                "Participante:", "Registrar Aposta",
+        if (sistema.getGrupos().isEmpty()) { log("Nenhum grupo cadastrado."); return; }
+        if (sistema.getPartidas().isEmpty()) { log("Nenhuma partida cadastrada."); return; }
+
+        // 1. Selecionar grupo
+        Grupo grupo = (Grupo) JOptionPane.showInputDialog(this,
+                "Selecione o grupo:", "Registrar Aposta",
                 JOptionPane.PLAIN_MESSAGE, null,
-                sistema.getParticipantes().toArray(), sistema.getParticipantes().get(0));
+                sistema.getGrupos().toArray(), sistema.getGrupos().get(0));
+        if (grupo == null) return;
+
+        // 2. Selecionar participante do grupo
+        List<Participante> membros = grupo.getParticipantes();
+        if (membros.isEmpty()) { log("O grupo " + grupo + " não possui participantes."); return; }
+
+        Participante p = (Participante) JOptionPane.showInputDialog(this,
+                "Selecione o participante:", "Registrar Aposta",
+                JOptionPane.PLAIN_MESSAGE, null,
+                membros.toArray(), membros.get(0));
         if (p == null) return;
 
+        // 3. Selecionar partida
         Partida partida = (Partida) JOptionPane.showInputDialog(this,
-                "Partida:", "Registrar Aposta",
+                "Selecione a partida:", "Registrar Aposta",
                 JOptionPane.PLAIN_MESSAGE, null,
                 sistema.getPartidas().toArray(), sistema.getPartidas().get(0));
         if (partida == null) return;
 
+        // 4. Verificar se já apostou nesta partida
+        if (sistema.jaApostou(p, partida)) {
+            log("Erro: " + p.getNome() + " já registrou uma aposta nesta partida.");
+            return;
+        }
+
+        // 5. Inserir palpite
         String gMStr = JOptionPane.showInputDialog(this, "Gols do mandante (" + partida.getClubeMandante() + "):");
         String gVStr = JOptionPane.showInputDialog(this, "Gols do visitante (" + partida.getClubeVisitante() + "):");
         if (gMStr == null || gVStr == null) return;
@@ -298,7 +311,6 @@ public class MainFrame extends JFrame {
         log(sb.toString());
     }
 
-    // =========================================================
     private void log(String msg) {
         taLog.append(msg + "\n");
         taLog.setCaretPosition(taLog.getDocument().getLength());
