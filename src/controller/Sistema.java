@@ -38,9 +38,11 @@ public class Sistema {
 
     public String cadastrarClube(Clube clube) {
         for (Clube c : clubes) {
+
             if (c.getNome().equalsIgnoreCase(clube.getNome())) return "Clube já cadastrado";
         }
         clubes.add(clube);
+
         return "ok";
     }
 

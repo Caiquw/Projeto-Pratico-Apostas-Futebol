@@ -11,6 +11,8 @@ public class Clube extends EntidadeEsportiva {
     public Clube(String nome, String estado) {
         super(nome);
         this.estado = estado;
+
+
     }
 
     @Override

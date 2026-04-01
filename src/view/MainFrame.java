@@ -21,8 +21,29 @@ public class MainFrame extends JFrame {
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        inicializarClubes();
         construirUI();
         setVisible(true);
+    }
+
+    private void inicializarClubes() {
+        Clube[] clubes = {
+                new Clube("Corinthians", "SP"),
+                new Clube("Palmeiras", "SP"),
+                new Clube("São Paulo", "SP"),
+                new Clube("Santos", "SP"),
+                new Clube("Flamengo", "RJ"),
+                new Clube("Vasco", "RJ"),
+                new Clube("Fluminense", "RJ"),
+                new Clube("Botafogo", "RJ"),
+                new Clube("Atlético Mineiro", "MG"),
+                new Clube("Cruzeiro", "MG"),
+                new Clube("Grêmio", "RS"),
+                new Clube("Internacional", "RS")
+        };
+        for (Clube c : clubes) {
+            sistema.cadastrarClube(c);
+        }
     }
 
     private void construirUI() {
