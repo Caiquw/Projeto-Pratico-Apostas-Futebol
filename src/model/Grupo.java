@@ -30,7 +30,7 @@ public class Grupo implements Cadastravel {
         return "ok";
     }
 
-    /** Retorna participantes ordenados por pontuação (desc) */
+    /** retorna participantes ordenados por pontuação (desc) */
     public List<Participante> getClassificacao() {
         List<Participante> ranking = new ArrayList<>(participantes);
         ranking.sort(Comparator.comparingInt(Participante::getPontuacaoTotal).reversed());
