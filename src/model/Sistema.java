@@ -1,6 +1,5 @@
-package controller;
+package model;
 
-import model.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ public class Sistema {
         return instancia;
     }
 
-    // ---- Clube ----
     public String cadastrarClube(Clube clube) {
         for (Clube c : clubes) {
             if (c.getNome().equalsIgnoreCase(clube.getNome())) return "Clube já cadastrado";
@@ -43,7 +41,6 @@ public class Sistema {
         return "ok";
     }
 
-    // ---- Campeonato ----
     public String cadastrarCampeonato(Campeonato campeonato) {
         for (Campeonato c : campeonatos) {
             if (c.getNome().equalsIgnoreCase(campeonato.getNome())) return "Campeonato já cadastrado";
@@ -52,7 +49,6 @@ public class Sistema {
         return "ok";
     }
 
-    // ---- Partida ----
     public String cadastrarPartida(Partida partida) {
         if (partida.getClubeMandante().equals(partida.getClubeVisitante())) {
             return "Os clubes da partida não podem ser iguais";
@@ -61,7 +57,6 @@ public class Sistema {
         return "ok";
     }
 
-    // ---- Grupo ----
     public String cadastrarGrupo(Grupo grupo) {
         if (grupos.size() >= MAX_GRUPOS) return "Limite de grupos atingido (máx. 5)";
         for (Grupo g : grupos) {
@@ -71,31 +66,19 @@ public class Sistema {
         return "ok";
     }
 
-    // ---- Participante ----
     public String cadastrarParticipante(Participante participante) {
-        for (Participante p : participantes) {
-            if (p.getLogin().equalsIgnoreCase(participante.getLogin())) return "Login já utilizado";
-        }
         participantes.add(participante);
         return "ok";
     }
 
-    // ---- Aposta ----
     public String registrarAposta(Aposta aposta) {
         if (!aposta.getPartida().isApostaPermitida()) {
             return "Apostas encerradas: a partida já ocorreu ou está a menos de 20 minutos";
-        }
-        for (Aposta a : apostas) {
-            if (a.getParticipante().equals(aposta.getParticipante())
-                    && a.getPartida().equals(aposta.getPartida())) {
-                return "Este participante já apostou nesta partida";
-            }
         }
         apostas.add(aposta);
         return "ok";
     }
 
-    // ---- Resultado ----
     public void registrarResultado(Partida partida, int golsMandante, int golsVisitante) {
         partida.registrarResultado(golsMandante, golsVisitante);
         for (Aposta a : apostas) {
@@ -123,7 +106,6 @@ public class Sistema {
         return resultado;
     }
 
-    // ---- Getters ----
     public List<Clube> getClubes() { return clubes; }
     public List<Campeonato> getCampeonatos() { return campeonatos; }
     public List<Partida> getPartidas() { return partidas; }

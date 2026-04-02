@@ -1,6 +1,5 @@
 package view;
 
-import controller.Sistema;
 import model.*;
 
 import javax.swing.*;
@@ -200,10 +199,8 @@ public class MainFrame extends JFrame {
         if (sistema.getGrupos().isEmpty()) { log("Crie um grupo primeiro."); return; }
         String nome = JOptionPane.showInputDialog(this, "Nome do participante:");
         if (nome == null || nome.isBlank()) return;
-        String login = JOptionPane.showInputDialog(this, "Login:");
-        if (login == null || login.isBlank()) return;
 
-        Participante p = new Participante(nome.trim(), login.trim());
+        Participante p = new Participante(nome.trim(), nome.trim());
         String res = sistema.cadastrarParticipante(p);
         if (!"ok".equals(res)) { log("Erro: " + res); return; }
 
