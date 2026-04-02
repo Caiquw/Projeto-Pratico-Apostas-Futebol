@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class LoginFrame extends JFrame {
 
-    // Credenciais
+    // credenciais fixas
     private static final String ADMIN_LOGIN = "admin";
     private static final String ADMIN_SENHA = "admin123";
     private static final String USER_LOGIN  = "user";
@@ -45,7 +45,6 @@ public class LoginFrame extends JFrame {
 
         btnEntrar.addActionListener(e -> tentarLogin());
 
-        // Permite pressionar Enter para logar
         tfSenha.addActionListener(e -> tentarLogin());
     }
 
