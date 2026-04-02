@@ -20,7 +20,7 @@ public class Clube extends EntidadeEsportiva {
         return "Clube";
     }
 
-    // Polimorfismo: sobreposição de exibirInfo
+    // polimorfismo: sobreposição de exibirInfo
     @Override
     public String exibirInfo() {
         return "[Clube] " + getNome() + " - " + estado;
