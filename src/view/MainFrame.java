@@ -59,6 +59,10 @@ public class MainFrame extends JFrame {
         JButton btnParticipante = new JButton("Cadastrar Participante");
         JButton btnAposta       = new JButton("Registrar Aposta");
 
+        JButton btnCadastrarClube = new JButton("Cadastrar Clube");
+        painelBotoes.add(btnCadastrarClube);
+        btnCadastrarClube.addActionListener(e -> cadastrarClube());
+
         painelBotoes.add(btnCampeonato);
         painelBotoes.add(btnAddClube);
         painelBotoes.add(btnPartida);
@@ -306,6 +310,16 @@ public class MainFrame extends JFrame {
             sb.append(String.format("%-4d %-20s %d%n", pos++, p.getNome(), p.getPontuacaoTotal()));
         }
         log(sb.toString());
+    }
+
+    private void cadastrarClube() {
+        String nome = JOptionPane.showInputDialog(this, "Nome do clube:");
+        if (nome == null || nome.isBlank()) return;
+        String estado = JOptionPane.showInputDialog(this, "Estado (sigla, ex: SP):");
+        if (estado == null || estado.isBlank()) return;
+        String res = sistema.cadastrarClube(new Clube(nome.trim(), estado.trim().toUpperCase()));
+        if ("ok".equals(res)) log("Clube cadastrado: " + nome.trim() + " - " + estado.trim().toUpperCase());
+        else log("Erro: " + res);
     }
 
     private void log(String msg) {
