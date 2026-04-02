@@ -70,7 +70,7 @@ public class MainFrame extends JFrame {
         painelBotoes.add(btnParticipante);
         painelBotoes.add(btnAposta);
 
-        // Botão exclusivo do admin
+       // ação exclusiva do admin
         if (isAdmin) {
             JButton btnResultado = new JButton("Registrar Resultado");
             painelBotoes.add(btnResultado);
@@ -108,10 +108,6 @@ public class MainFrame extends JFrame {
         String perfil = isAdmin ? "Administrador" : "Usuário";
         log("Bem-vindo! Perfil: " + perfil + ". Use os botões para operar o sistema.");
     }
-
-    // =========================================================
-    // AÇÕES
-    // =========================================================
 
     private void cadastrarCampeonato() {
         String nome = JOptionPane.showInputDialog(this, "Nome do campeonato:");
@@ -223,14 +219,12 @@ public class MainFrame extends JFrame {
         if (sistema.getGrupos().isEmpty()) { log("Nenhum grupo cadastrado."); return; }
         if (sistema.getPartidas().isEmpty()) { log("Nenhuma partida cadastrada."); return; }
 
-        // 1. Selecionar grupo
         Grupo grupo = (Grupo) JOptionPane.showInputDialog(this,
                 "Selecione o grupo:", "Registrar Aposta",
                 JOptionPane.PLAIN_MESSAGE, null,
                 sistema.getGrupos().toArray(), sistema.getGrupos().get(0));
         if (grupo == null) return;
 
-        // 2. Selecionar participante do grupo
         List<Participante> membros = grupo.getParticipantes();
         if (membros.isEmpty()) { log("O grupo " + grupo + " não possui participantes."); return; }
 
@@ -240,20 +234,18 @@ public class MainFrame extends JFrame {
                 membros.toArray(), membros.get(0));
         if (p == null) return;
 
-        // 3. Selecionar partida
         Partida partida = (Partida) JOptionPane.showInputDialog(this,
                 "Selecione a partida:", "Registrar Aposta",
                 JOptionPane.PLAIN_MESSAGE, null,
                 sistema.getPartidas().toArray(), sistema.getPartidas().get(0));
         if (partida == null) return;
 
-        // 4. Verificar se já apostou nesta partida
         if (sistema.jaApostou(p, partida)) {
             log("Erro: " + p.getNome() + " já registrou uma aposta nesta partida.");
             return;
         }
 
-        // 5. Inserir palpite
+
         String gMStr = JOptionPane.showInputDialog(this, "Gols do mandante (" + partida.getClubeMandante() + "):");
         String gVStr = JOptionPane.showInputDialog(this, "Gols do visitante (" + partida.getClubeVisitante() + "):");
         if (gMStr == null || gVStr == null) return;
