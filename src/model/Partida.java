@@ -28,7 +28,7 @@ public class Partida implements Cadastravel {
         this.campeonato = campeonato;
     }
 
-    /** Verifica se ainda é possível apostar (até 20 min antes) */
+    /** verifica se ainda é possível apostar (até 20 min antes) */
     public boolean isApostaPermitida() {
         if (realizada) return false;
         return LocalDateTime.now().isBefore(dataHora.minusMinutes(20));
@@ -40,7 +40,7 @@ public class Partida implements Cadastravel {
         this.realizada = true;
     }
 
-    /** Retorna o resultado como String: nome do vencedor ou "Empate" */
+    /** retorna o resultado como String: nome do vencedor ou "Empate" */
     public String getResultado() {
         if (!realizada) return "Não realizada";
         if (golsMandante > golsVisitante) return clubeMandante.getNome();
