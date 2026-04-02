@@ -21,12 +21,6 @@ public class Aposta {
         this.golsVisitantePalpite = golsVisitante;
     }
 
-    /**
-     * Calcula e retorna a pontuação desta aposta:
-     * - Resultado correto (vencedor/empate): 5 pontos
-     * - Resultado + placar exato: 10 pontos
-     * - Errou: 0 pontos
-     */
     public int calcularPontuacao() {
         if (!partida.isRealizada()) return 0;
 
