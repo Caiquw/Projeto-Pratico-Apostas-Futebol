@@ -1,0 +1,13 @@
+Corinthians;SP
+Palmeiras;SP
+São Paulo;SP
+Santos;SP
+Flamengo;RJ
+Vasco;RJ
+Fluminense;RJ
+Botafogo;RJ
+Atlético Mineiro;MG
+Cruzeiro;MG
+Grêmio;RS
+Internacional;RS
+Noroeste;SP
